@@ -13,6 +13,15 @@ type ImageDelivery struct {
 	repository ImageInterface.IImageRepository
 }
 
+// @tags Images
+// @Summary image
+// @Description get list image
+// @start_time default
+// @Param id query string false "image id"
+// @Param user_id query string false "user id"
+// @Param status query string false "status"
+// @Success 200 {object} []model.Image
+// @Router /api/v1/images [get]
 func (q *ImageDelivery) Gets(c *gin.Context) {
 	var filter model.Image
 	if c.BindQuery(&filter) == nil {
@@ -31,6 +40,14 @@ func (q *ImageDelivery) Gets(c *gin.Context) {
 	}
 }
 
+// @tags Images
+// @Summary image
+// @Description get list image
+// @start_time default
+// @Param id query string false "image id"
+// @Param data body string false "image content"
+// @Success 200 {string} string	""
+// @Router /api/v1/images [post]
 func (q *ImageDelivery) Update(c *gin.Context) {
 	imageID := c.Query("id")
 	var update model.Image

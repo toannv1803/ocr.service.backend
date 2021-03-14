@@ -1,0 +1,182 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "OCR BACKEND API",
+        "contact": {},
+        "license": {},
+        "version": "1.0"
+    },
+    "paths": {
+        "/api/v1/images": {
+            "get": {
+                "description": "get list image",
+                "tags": [
+                    "Images"
+                ],
+                "summary": "image",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "image id",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "user id",
+                        "name": "user_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "status",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Image"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "get list image",
+                "tags": [
+                    "Images"
+                ],
+                "summary": "image",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "image id",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "description": "image content",
+                        "name": "data",
+                        "in": "body",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/object": {
+            "get": {
+                "description": "download object",
+                "tags": [
+                    "Object"
+                ],
+                "summary": "upload, download object",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "image id",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "user id",
+                        "name": "user_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "status",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "upload object",
+                "tags": [
+                    "Object"
+                ],
+                "summary": "upload, download object",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "add request id",
+                        "name": "request_id",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "add file multipart/form-data",
+                        "name": "file",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Image"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "model.Image": {
+            "type": "object",
+            "properties": {
+                "create_at": {
+                    "type": "string"
+                },
+                "data": {
+                    "type": "string"
+                },
+                "error": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "path": {
+                    "type": "string"
+                },
+                "request_id": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

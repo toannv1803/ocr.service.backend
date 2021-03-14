@@ -24,6 +24,14 @@ type ObjectDelivery struct {
 
 var CONFIG, _ = config.NewConfig(nil)
 
+// @tags Object
+// @Summary upload, download object
+// @Description upload object
+// @start_time default
+// @Param request_id header string false "add request id"
+// @Param file formData string false "add file multipart/form-data"
+// @Success 200 {object} model.Image
+// @Router /api/v1/object [post]
 func (q *ObjectDelivery) Upload(c *gin.Context) {
 	// upload
 	file, err := c.FormFile("file")
@@ -71,6 +79,15 @@ func (q *ObjectDelivery) Upload(c *gin.Context) {
 	c.Writer.Write(data)
 }
 
+// @tags Object
+// @Summary upload, download object
+// @Description download object
+// @start_time default
+// @Param id query string false "image id"
+// @Param user_id query string false "user id"
+// @Param status query string false "status"
+// @Success 200 {object} []byte
+// @Router /api/v1/object [get]
 func (q *ObjectDelivery) Download(c *gin.Context) {
 	imageId := c.Query("id")
 	arrImage, err := q.imageRepository.Get(model.Image{Id: imageId})

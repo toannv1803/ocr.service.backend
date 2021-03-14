@@ -1,0 +1,118 @@
+definitions:
+  model.Image:
+    properties:
+      create_at:
+        type: string
+      data:
+        type: string
+      error:
+        type: string
+      id:
+        type: string
+      path:
+        type: string
+      request_id:
+        type: string
+      status:
+        type: string
+      user_id:
+        type: string
+    type: object
+info:
+  contact: {}
+  license: {}
+  title: OCR BACKEND API
+  version: "1.0"
+paths:
+  /api/v1/images:
+    get:
+      description: get list image
+      parameters:
+      - description: image id
+        in: query
+        name: id
+        type: string
+      - description: user id
+        in: query
+        name: user_id
+        type: string
+      - description: status
+        in: query
+        name: status
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Image'
+            type: array
+      summary: image
+      tags:
+      - Images
+    post:
+      description: get list image
+      parameters:
+      - description: image id
+        in: query
+        name: id
+        type: string
+      - description: image content
+        in: body
+        name: data
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: image
+      tags:
+      - Images
+  /api/v1/object:
+    get:
+      description: download object
+      parameters:
+      - description: image id
+        in: query
+        name: id
+        type: string
+      - description: user id
+        in: query
+        name: user_id
+        type: string
+      - description: status
+        in: query
+        name: status
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: integer
+            type: array
+      summary: upload, download object
+      tags:
+      - Object
+    post:
+      description: upload object
+      parameters:
+      - description: add request id
+        in: header
+        name: request_id
+        type: string
+      - description: add file multipart/form-data
+        in: formData
+        name: file
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Image'
+      summary: upload, download object
+      tags:
+      - Object
+swagger: "2.0"

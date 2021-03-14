@@ -3,72 +3,31 @@ package main
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
-	"html/template"
-	"io/ioutil"
-	"net/http"
-	ObjectDelivery "ocr/app/object/delivery"
-	"strings"
+	ImageDelivery "ocr.service.backend/app/image/delivery"
+	ObjectDelivery "ocr.service.backend/app/object/delivery"
+	"ocr.service.backend/config"
+	"os"
 )
 
-func uploadFile(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("method:", r.Method)
-	if r.Method == "GET" {
-		t, _ := template.ParseFiles("fileUp.gtpl")
-		t.Execute(w, nil)
-	} else {
-		// parse input
-		r.ParseMultipartForm(10 << 20)
-		// 2. retrieve file
-		file, handler, err := r.FormFile("file")
-		if err != nil {
-			fmt.Println("Error Retrieving the File")
-			fmt.Println(err)
-			return
-		}
-		defer file.Close()
-		if !strings.Contains(handler.Header.Get("Content-Type"), "image") {
-			w.WriteHeader(400)
-			w.Write([]byte("please upload image"))
-			return
-		}
-		// write file on our server
+var CONFIG, _ = config.NewConfig(nil)
 
-		fileBytes, err := ioutil.ReadAll(file)
-		if err != nil {
-			fmt.Println(err)
-		}
-		_uuid := uuid.New()
-		err = ioutil.WriteFile("./images/"+_uuid.String()+".jpg", fileBytes, 0644)
-		if err != nil {
-			fmt.Fprintf(w, "Uploaded file failed\n"+err.Error())
-			return
-		}
-		// update database
-		// send message
-		// return result
-		fmt.Fprintf(w, "Successfully Uploaded File\n")
-	}
-}
-func downloadFile(w http.ResponseWriter, r *http.Request) {
-	//f, err := os.Open(r.)
-	//if err !=nil {
-	//	w.WriteHeader(404)
-	//	return
-	//}
-	//var _ io.Reader = (*os.File)(nil)
-}
-func setupRoutes() {
-	http.HandleFunc("/image", uploadFile)
-	http.ListenAndServe(":2020", nil)
-}
 func main() {
 	router := gin.Default()
 	objectDelivery, err := ObjectDelivery.NewObjectDelivery()
 	if err != nil {
 		fmt.Println(err)
+		os.Exit(1)
+	}
+	imageDelivery, err := ImageDelivery.NewImageDelivery()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
 	}
 	router.PUT("/api/v1/object", objectDelivery.Upload)
+	router.POST("/api/v1/object", objectDelivery.Upload)
 	router.GET("/api/v1/object", objectDelivery.Download)
+
+	router.GET("/api/v1/images", imageDelivery.Gets)
+	router.POST("/api/v1/images", imageDelivery.Update)
 	router.Run(":2020")
 }

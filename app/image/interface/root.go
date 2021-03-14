@@ -2,7 +2,7 @@ package ImageInterface
 
 import (
 	"github.com/gin-gonic/gin"
-	"ocr/model"
+	"ocr.service.backend/model"
 )
 
 type IImageDelivery interface {
@@ -11,7 +11,7 @@ type IImageDelivery interface {
 }
 
 type IImageRepository interface {
-	Get() (model.Image, error)
+	Get(filter model.Image) ([]model.Image, error)
 	InsertOne(image model.Image) (string, error)
 	Update(filter model.Image, image model.Image) error
 }

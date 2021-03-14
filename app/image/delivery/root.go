@@ -1,56 +1,60 @@
 package ImageDelivery
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
-	"io"
-	"net/http"
-	"os"
-	"strings"
+	ImageInterface "ocr.service.backend/app/image/interface"
+	ImageRepository "ocr.service.backend/app/image/repository"
+	"ocr.service.backend/model"
 )
 
-type UploadDelivery struct {
-	r *gin.Engine
+type ImageDelivery struct {
+	repository ImageInterface.IImageRepository
 }
 
-func (q UploadDelivery) Upload(c *gin.Context) {
-	// upload
-	file, err := c.FormFile("file")
-	// validate
-	if err != nil {
-		c.String(400, fmt.Sprintf("multipart/form-data require field 'file'"))
+func (q *ImageDelivery) Gets(c *gin.Context) {
+	var filter model.Image
+	if c.BindQuery(&filter) == nil {
+		arrImage, err := q.repository.Get(filter)
+		if err != nil {
+			c.String(500, "get data failed")
+			return
+		}
+		byteImage, _ := json.Marshal(arrImage)
+		c.Writer.Write(byteImage)
+		return
+	} else {
+		fmt.Println(c.BindQuery(&filter))
+		c.String(500, "...")
 		return
 	}
-	if !strings.Contains(file.Header.Get("Content-Type"), "image") {
-		c.String(400, fmt.Sprintf("please upload image"))
-		return
-	}
-	// Upload the file to specific dst.
-	_uuid := uuid.New()
-	dst := "./images/" + _uuid.String() + ".jpg"
-	err = c.SaveUploadedFile(file, dst)
-	if err != nil {
-		c.String(500, fmt.Sprintf("write file failed"))
-		return
-	}
-	// update database
-	// send message
-	// return result
-	c.String(http.StatusOK, fmt.Sprintf("'%s' uploaded!", file.Filename))
 }
 
-func (q UploadDelivery) Download(c *gin.Context) {
-	//imageId := c.Query("id")
-	f, err := os.Open("images/aa22420b-cca9-4192-8c1d-1bf3a9d22a74.jpg")
-	if err != nil {
-		c.String(500, fmt.Sprintf("read file failed"))
+func (q *ImageDelivery) Update(c *gin.Context) {
+	imageID := c.Query("id")
+	var update model.Image
+	err := c.BindJSON(&update)
+	if err == nil {
+		err := q.repository.Update(model.Image{Id: imageID}, model.Image{Data: update.Data})
+		if err != nil {
+			c.String(500, "update data failed")
+			return
+		}
+		c.Writer.WriteHeader(200)
+		return
+	} else {
+		c.String(500, "parser body failed, "+err.Error())
+		return
 	}
-	defer f.Close()
-	//bufio.NewReader(f)
-	io.Copy(c.Writer, f)
 }
 
-func NewUploadDelivery() (*UploadDelivery, error) {
-	return &UploadDelivery{}, nil
+func NewImageDelivery() (*ImageDelivery, error) {
+	var q ImageDelivery
+	var err error
+	q.repository, err = ImageRepository.NewImageRepository()
+	if err != nil {
+		return nil, err
+	}
+	return &q, nil
 }

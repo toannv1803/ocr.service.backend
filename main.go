@@ -7,7 +7,7 @@ import (
 	"html/template"
 	"io/ioutil"
 	"net/http"
-	upload_delivery "ocr/app/upload/delivery"
+	ObjectDelivery "ocr/app/object/delivery"
 	"strings"
 )
 
@@ -59,12 +59,16 @@ func downloadFile(w http.ResponseWriter, r *http.Request) {
 	//var _ io.Reader = (*os.File)(nil)
 }
 func setupRoutes() {
-	http.HandleFunc("/upload", uploadFile)
+	http.HandleFunc("/image", uploadFile)
 	http.ListenAndServe(":2020", nil)
 }
 func main() {
 	router := gin.Default()
-	uploadDelivery, _ := upload_delivery.NewUploadDelivery()
-	router.POST("/upload", uploadDelivery.UploadHandle)
+	objectDelivery, err := ObjectDelivery.NewObjectDelivery()
+	if err != nil {
+		fmt.Println(err)
+	}
+	router.PUT("/api/v1/object", objectDelivery.Upload)
+	router.GET("/api/v1/object", objectDelivery.Download)
 	router.Run(":2020")
 }

@@ -1,10 +1,12 @@
-package upload_delivery
+package ImageDelivery
 
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"io"
 	"net/http"
+	"os"
 	"strings"
 )
 
@@ -12,7 +14,7 @@ type UploadDelivery struct {
 	r *gin.Engine
 }
 
-func (q UploadDelivery) UploadHandle(c *gin.Context) {
+func (q UploadDelivery) Upload(c *gin.Context) {
 	// upload
 	file, err := c.FormFile("file")
 	// validate
@@ -36,6 +38,17 @@ func (q UploadDelivery) UploadHandle(c *gin.Context) {
 	// send message
 	// return result
 	c.String(http.StatusOK, fmt.Sprintf("'%s' uploaded!", file.Filename))
+}
+
+func (q UploadDelivery) Download(c *gin.Context) {
+	//imageId := c.Query("id")
+	f, err := os.Open("images/aa22420b-cca9-4192-8c1d-1bf3a9d22a74.jpg")
+	if err != nil {
+		c.String(500, fmt.Sprintf("read file failed"))
+	}
+	defer f.Close()
+	//bufio.NewReader(f)
+	io.Copy(c.Writer, f)
 }
 
 func NewUploadDelivery() (*UploadDelivery, error) {

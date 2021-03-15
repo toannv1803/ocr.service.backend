@@ -60,11 +60,14 @@ func (q *ObjectDelivery) Upload(c *gin.Context) {
 		c.String(500, fmt.Sprintf("write file failed"))
 		return
 	}
-
+	userId := c.Request.Header.Get("user_id")
+	if userId == "" {
+		userId = "anonymous"
+	}
 	// update database
 	image := model.Image{
 		Id:        uuid.New().String(),
-		UserId:    c.Request.Header.Get("user_id"), // get from jwt
+		UserId:    userId, // get from jwt
 		RequestId: c.Request.Header.Get("request_id"),
 		Path:      imagePath,
 		Status:    "pending",

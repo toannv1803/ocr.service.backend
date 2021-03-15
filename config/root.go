@@ -24,11 +24,22 @@ func (q Config) Refresh() {
 	q.viper.SetDefault("GET_ALLOWED_IPS", []string{})
 	q.viper.SetDefault("OBJECT_PATH", "/data/object")
 
+	q.viper.SetDefault("IMAGE_TASK_QUEUE", "orc.image-task")
+	q.viper.SetDefault("IMAGE_SUCCESS_QUEUE", "orc.success")
+	q.viper.SetDefault("IMAGE_ERROR_QUEUE", "orc.error")
+
 	q.viper.SetDefault("MONGODB_HOST", "localhost")
 	q.viper.SetDefault("MONGODB_PORT", "27017")
 	q.viper.SetDefault("MONGODB_USERNAME", "")
 	q.viper.SetDefault("MONGODB_PASSWORD", "")
 	q.viper.SetDefault("MONGODB_DB", "ocr")
+
+	q.viper.SetDefault("RABBITMQ_HOST", "localhost")
+	q.viper.SetDefault("RABBITMQ_PORT", "5672")
+	q.viper.SetDefault("RABBITMQ_USERNAME", "guest")
+	q.viper.SetDefault("RABBITMQ_PASSWORD", "guest")
+	q.viper.SetDefault("RABBITMQ_VHOST", "/")
+
 	q.viper.AutomaticEnv() // Read from os env
 	q.ReadFromEnvFile()
 }

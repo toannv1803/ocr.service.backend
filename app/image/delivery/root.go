@@ -6,12 +6,20 @@ import (
 	"github.com/gin-gonic/gin"
 	ImageInterface "ocr.service.backend/app/image/interface"
 	ImageRepository "ocr.service.backend/app/image/repository"
+	"ocr.service.backend/config"
 	"ocr.service.backend/model"
+	module "ocr.service.backend/module/rabbitmq"
 )
 
+var CONFIG, _ = config.NewConfig(nil)
+
 type ImageDelivery struct {
-	repository ImageInterface.IImageRepository
+	repository     ImageInterface.IImageRepository
+	rabbitmq       *module.RabbitMQ
+	imageTaskQueue string
 }
+
+type RabbitMQLogin = module.RabbitMQLogin
 
 // @tags Images
 // @Summary image
@@ -66,6 +74,18 @@ func (q *ImageDelivery) Update(c *gin.Context) {
 	}
 }
 
+func (q *ImageDelivery) PublishTask(image model.Image) error {
+	data, err := json.Marshal(image)
+	if err != nil {
+		return err
+	}
+	err = q.rabbitmq.SendMessage(q.imageTaskQueue, data, 0)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func NewImageDelivery() (*ImageDelivery, error) {
 	var q ImageDelivery
 	var err error
@@ -73,5 +93,18 @@ func NewImageDelivery() (*ImageDelivery, error) {
 	if err != nil {
 		return nil, err
 	}
+	rabbitmqLogin := module.RabbitMQLogin{
+		Host:     CONFIG.GetString("RABBITMQ_HOST"),
+		Port:     CONFIG.GetString("RABBITMQ_PORT"),
+		Username: CONFIG.GetString("RABBITMQ_USERNAME"),
+		Password: CONFIG.GetString("RABBITMQ_PASSWORD"),
+		VHOST:    CONFIG.GetString("RABBITMQ_VHOST"),
+	}
+	q.rabbitmq, err = module.NewRabbitMQ(rabbitmqLogin)
+	if err != nil {
+		return nil, err
+	}
+	q.imageTaskQueue = CONFIG.GetString("IMAGE_TASK_QUEUE")
+	q.rabbitmq.CreateQueue(q.imageTaskQueue, 10)
 	return &q, nil
 }

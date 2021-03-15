@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"io"
+	ImageDelivery "ocr.service.backend/app/image/delivery"
 	ImageInterface "ocr.service.backend/app/image/interface"
 	ImageRepository "ocr.service.backend/app/image/repository"
 	"ocr.service.backend/config"
@@ -20,6 +21,7 @@ import (
 
 type ObjectDelivery struct {
 	imageRepository ImageInterface.IImageRepository
+	imageDelivery   ImageInterface.IImageDelivery
 }
 
 var CONFIG, _ = config.NewConfig(nil)
@@ -74,6 +76,11 @@ func (q *ObjectDelivery) Upload(c *gin.Context) {
 		return
 	}
 	// send message
+	err = q.imageDelivery.PublishTask(image)
+	if err != nil {
+		c.String(500, fmt.Sprintf("rabbitmq failed"))
+		return
+	}
 	// return result
 	data, _ := json.Marshal(image)
 	c.Writer.Write(data)
@@ -120,6 +127,10 @@ func NewObjectDelivery() (*ObjectDelivery, error) {
 		}
 	}
 	q.imageRepository, err = ImageRepository.NewImageRepository()
+	if err != nil {
+		return nil, err
+	}
+	q.imageDelivery, err = ImageDelivery.NewImageDelivery()
 	if err != nil {
 		return nil, err
 	}

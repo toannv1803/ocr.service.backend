@@ -8,6 +8,7 @@ import (
 type IImageDelivery interface {
 	Gets(c *gin.Context)
 	Update(c *gin.Context)
+	PublishTask(image model.Image) error
 }
 
 type IImageRepository interface {

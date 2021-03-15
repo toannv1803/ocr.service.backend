@@ -1,5 +1,5 @@
 ## Description
-h vụ này sẽ xử lý nghiệp vụ liên quan tới image
+dịch vụ này sẽ xử lý nghiệp vụ liên quan tới image
 
 hỗ trợ:
 - Upload, download hình
@@ -25,8 +25,8 @@ go run .
 ## DOC
 ```bash
 // generate doc
-go get -u github.com/swaggo/swag/cmd/swag
-swag init
+//go get -u github.com/swaggo/swag/cmd/swag
+//swag init
 // access doc
 http://localhost/docs/index.html
 ```

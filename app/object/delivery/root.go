@@ -1,7 +1,6 @@
 package ObjectDelivery
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -85,8 +84,7 @@ func (q *ObjectDelivery) Upload(c *gin.Context) {
 		return
 	}
 	// return result
-	data, _ := json.Marshal(image)
-	c.Writer.Write(data)
+	c.JSON(200, image)
 }
 
 // @tags Object

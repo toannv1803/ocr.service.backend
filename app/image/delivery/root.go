@@ -38,8 +38,7 @@ func (q *ImageDelivery) Gets(c *gin.Context) {
 			c.String(500, "get data failed")
 			return
 		}
-		byteImage, _ := json.Marshal(arrImage)
-		c.Writer.Write(byteImage)
+		c.JSON(200, arrImage)
 		return
 	} else {
 		fmt.Println(c.BindQuery(&filter))

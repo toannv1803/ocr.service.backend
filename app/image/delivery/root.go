@@ -50,7 +50,7 @@ func (q *ImageDelivery) Gets(c *gin.Context) {
 
 // @tags Images
 // @Summary image
-// @Description get list image
+// @Description update image
 // @start_time default
 // @Param id query string false "image id"
 // @Param data body string false "image content"

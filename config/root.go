@@ -24,9 +24,9 @@ func (q Config) Refresh() {
 	q.viper.SetDefault("GET_ALLOWED_IPS", []string{})
 	q.viper.SetDefault("OBJECT_PATH", "/data/object")
 
-	q.viper.SetDefault("IMAGE_TASK_QUEUE", "orc.image-task")
-	q.viper.SetDefault("IMAGE_SUCCESS_QUEUE", "orc.success")
-	q.viper.SetDefault("IMAGE_ERROR_QUEUE", "orc.error")
+	q.viper.SetDefault("IMAGE_TASK_QUEUE", "orc.image.task")
+	q.viper.SetDefault("IMAGE_SUCCESS_QUEUE", "orc.image.success")
+	q.viper.SetDefault("IMAGE_ERROR_QUEUE", "orc.image.error")
 
 	q.viper.SetDefault("MONGODB_HOST", "localhost")
 	q.viper.SetDefault("MONGODB_PORT", "27017")

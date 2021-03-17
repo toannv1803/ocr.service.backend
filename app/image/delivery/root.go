@@ -14,9 +14,11 @@ import (
 var CONFIG, _ = config.NewConfig(nil)
 
 type ImageDelivery struct {
-	repository     ImageInterface.IImageRepository
-	rabbitmq       *module.RabbitMQ
-	imageTaskQueue string
+	repository        ImageInterface.IImageRepository
+	rabbitmq          *module.RabbitMQ
+	imageTaskQueue    string
+	imageSuccessQueue string
+	imageErrorQueue   string
 }
 
 type RabbitMQLogin = module.RabbitMQLogin
@@ -84,6 +86,30 @@ func (q *ImageDelivery) PublishTask(image model.Image) error {
 	}
 	return nil
 }
+func (q *ImageDelivery) HandleTaskSuccess(message []byte, messageAction *module.MessageAction) {
+	var image model.Image
+	err := json.Unmarshal(message, &image)
+	if err != nil {
+		fmt.Println(err)
+		messageAction.Ack()
+		return
+	}
+	if image.Id == "" {
+		fmt.Println("[ERROR] empty id")
+		messageAction.Ack()
+		return
+	}
+	err = q.repository.Update(model.Image{Id: image.Id}, image)
+	if err != nil {
+		fmt.Println(err)
+		messageAction.Reject()
+		return
+	}
+	messageAction.Ack()
+}
+func (q *ImageDelivery) HandleTaskError(message []byte, messageAction *module.MessageAction) {
+	q.HandleTaskSuccess(message, messageAction) //success and error same handle
+}
 
 func NewImageDelivery() (*ImageDelivery, error) {
 	var q ImageDelivery
@@ -104,6 +130,39 @@ func NewImageDelivery() (*ImageDelivery, error) {
 		return nil, err
 	}
 	q.imageTaskQueue = CONFIG.GetString("IMAGE_TASK_QUEUE")
-	q.rabbitmq.CreateQueue(q.imageTaskQueue, 10)
+	q.imageSuccessQueue = CONFIG.GetString("IMAGE_SUCCESS_QUEUE")
+	q.imageErrorQueue = CONFIG.GetString("IMAGE_ERROR_QUEUE")
+	err = q.rabbitmq.CreateQueue(q.imageTaskQueue, 10)
+	if err != nil {
+		return nil, err
+	}
+	err = q.rabbitmq.CreateQueue(q.imageSuccessQueue, 0)
+	if err != nil {
+		return nil, err
+	}
+	err = q.rabbitmq.CreateQueue(q.imageErrorQueue, 0)
+	if err != nil {
+		return nil, err
+	}
+	var consumeSuccessQueue = module.Consume{
+		q.imageSuccessQueue,
+		"",
+		false,
+		false,
+		false,
+		false,
+		5,
+	}
+	var consumeErrorQueue = module.Consume{
+		q.imageErrorQueue,
+		"",
+		false,
+		false,
+		false,
+		false,
+		5,
+	}
+	q.rabbitmq.Consume(consumeSuccessQueue, q.HandleTaskSuccess)
+	q.rabbitmq.Consume(consumeErrorQueue, q.HandleTaskError)
 	return &q, nil
 }

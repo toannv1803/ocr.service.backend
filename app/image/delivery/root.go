@@ -28,10 +28,14 @@ type RabbitMQLogin = module.RabbitMQLogin
 // @Description get list image
 // @start_time default
 // @Param image_id path string false "image id"
+// @Param Authorization header string true "'Bearer ' + token"
 // @Success 200 {object} []model.Image
-// @Router /api/v1/image/{image_id} [get]
+// @Router /api/v1/auth/image/{image_id} [get]
 func (q *ImageDelivery) GetById(c *gin.Context) {
 	var agent model.Agent
+	if v, ok := c.Get("agent"); ok {
+		agent = v.(model.Agent)
+	}
 	imageId := c.Param("image_id")
 	if imageId != "" {
 		arrImage, err := q.useCase.Gets(agent, model.Image{Id: imageId})
@@ -61,11 +65,15 @@ func (q *ImageDelivery) GetById(c *gin.Context) {
 // @start_time default
 // @Param id query string false "image id"
 // @Param user_id query string false "user id"
+// @Param Authorization header string true "'Bearer ' + token"
 // @Param status query string false "status"
 // @Success 200 {object} []model.Image
-// @Router /api/v1/images [get]
+// @Router /api/v1/auth/images [get]
 func (q *ImageDelivery) Gets(c *gin.Context) {
 	var agent model.Agent
+	if v, ok := c.Get("agent"); ok {
+		agent = v.(model.Agent)
+	}
 	var filter model.Image
 	if c.BindQuery(&filter) == nil {
 		arrImage, err := q.useCase.Gets(agent, filter)
@@ -96,13 +104,17 @@ func (q *ImageDelivery) Gets(c *gin.Context) {
 // @Description update image
 // @start_time default
 // @Param image_id path string false "image id"
+// @Param Authorization header string true "'Bearer ' + token"
 // @Param body body model.ImageUpdate true "image content"
 // @Success 200 {string} string	""
-// @Router /api/v1/image/{image_id} [post]
+// @Router /api/v1/auth/image/{image_id} [post]
 func (q *ImageDelivery) UpdateById(c *gin.Context) {
 	imageId := c.Param("image_id")
 	var agent model.Agent
 	var update model.ImageUpdate
+	if v, ok := c.Get("agent"); ok {
+		agent = v.(model.Agent)
+	}
 	err := c.BindJSON(&update)
 	if err == nil {
 		nModify, err := q.useCase.Update(agent, model.Image{Id: imageId}, model.Image{Data: update.Data})

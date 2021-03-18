@@ -29,13 +29,18 @@ info:
   title: OCR BACKEND API
   version: "1.0"
 paths:
-  /api/v1/image/{image_id}:
+  /api/v1/auth/image/{image_id}:
     get:
       description: get list image
       parameters:
       - description: image id
         in: path
         name: image_id
+        type: string
+      - description: '''Bearer '' + token'
+        in: header
+        name: Authorization
+        required: true
         type: string
       responses:
         "200":
@@ -54,6 +59,11 @@ paths:
         in: path
         name: image_id
         type: string
+      - description: '''Bearer '' + token'
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: image content
         in: body
         name: body
@@ -68,7 +78,7 @@ paths:
       summary: image
       tags:
       - Images
-  /api/v1/images:
+  /api/v1/auth/images:
     get:
       description: get list image
       parameters:
@@ -79,6 +89,11 @@ paths:
       - description: user id
         in: query
         name: user_id
+        type: string
+      - description: '''Bearer '' + token'
+        in: header
+        name: Authorization
+        required: true
         type: string
       - description: status
         in: query
@@ -94,13 +109,18 @@ paths:
       summary: image
       tags:
       - Images
-  /api/v1/object:
+  /api/v1/auth/object:
     post:
       description: upload object
       parameters:
       - description: add block id
         in: header
         name: block_id
+        type: string
+      - description: '''Bearer '' + token'
+        in: header
+        name: Authorization
+        required: true
         type: string
       - description: add file multipart/form-data
         in: formData
@@ -127,13 +147,18 @@ paths:
       summary: upload, download object
       tags:
       - Object
-  /api/v1/object/{id}:
+  /api/v1/auth/object/{id}:
     get:
       description: download object
       parameters:
       - description: object id
         in: path
         name: id
+        required: true
+        type: string
+      - description: '''Bearer '' + token'
+        in: header
+        name: Authorization
         required: true
         type: string
       responses:

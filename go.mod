@@ -3,6 +3,7 @@ module ocr.service.backend
 go 1.16
 
 require (
+	github.com/appleboy/gin-jwt/v2 v2.6.4 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
 	github.com/gin-gonic/gin v1.6.3 // indirect
 	github.com/go-openapi/spec v0.20.3 // indirect

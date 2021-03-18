@@ -25,7 +25,7 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/v1/image/{image_id}": {
+        "/api/v1/auth/image/{image_id}": {
             "get": {
                 "description": "get list image",
                 "tags": [
@@ -38,6 +38,13 @@ var doc = `{
                         "description": "image id",
                         "name": "image_id",
                         "in": "path"
+                    },
+                    {
+                        "type": "string",
+                        "description": "'Bearer ' + token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -66,6 +73,13 @@ var doc = `{
                         "in": "path"
                     },
                     {
+                        "type": "string",
+                        "description": "'Bearer ' + token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "description": "image content",
                         "name": "body",
                         "in": "body",
@@ -85,7 +99,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/images": {
+        "/api/v1/auth/images": {
             "get": {
                 "description": "get list image",
                 "tags": [
@@ -107,6 +121,13 @@ var doc = `{
                     },
                     {
                         "type": "string",
+                        "description": "'Bearer ' + token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
                         "description": "status",
                         "name": "status",
                         "in": "query"
@@ -125,7 +146,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/object": {
+        "/api/v1/auth/object": {
             "post": {
                 "description": "upload object",
                 "tags": [
@@ -138,6 +159,13 @@ var doc = `{
                         "description": "add block id",
                         "name": "block_id",
                         "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "'Bearer ' + token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
                     },
                     {
                         "type": "file",
@@ -175,7 +203,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/object/{id}": {
+        "/api/v1/auth/object/{id}": {
             "get": {
                 "description": "download object",
                 "tags": [
@@ -188,6 +216,13 @@ var doc = `{
                         "description": "object id",
                         "name": "id",
                         "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "'Bearer ' + token",
+                        "name": "Authorization",
+                        "in": "header",
                         "required": true
                     }
                 ],

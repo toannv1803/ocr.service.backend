@@ -19,7 +19,6 @@ var doc = `{
         "description": "{{.Description}}",
         "title": "{{.Title}}",
         "contact": {},
-        "license": {},
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
@@ -37,7 +36,8 @@ var doc = `{
                         "type": "string",
                         "description": "image id",
                         "name": "image_id",
-                        "in": "path"
+                        "in": "path",
+                        "required": true
                     },
                     {
                         "type": "string",
@@ -51,10 +51,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/model.Image"
-                            }
+                            "$ref": "#/definitions/model.Image"
                         }
                     }
                 }
@@ -70,7 +67,8 @@ var doc = `{
                         "type": "string",
                         "description": "image id",
                         "name": "image_id",
-                        "in": "path"
+                        "in": "path",
+                        "required": true
                     },
                     {
                         "type": "string",
@@ -109,13 +107,21 @@ var doc = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "image id",
+                        "name": "block_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "name": "id",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "user id",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "name": "user_id",
                         "in": "query"
                     },

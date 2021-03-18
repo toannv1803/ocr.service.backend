@@ -26,6 +26,7 @@ go run .
 ```bash
 // generate doc
 //go get -u github.com/swaggo/swag/cmd/swag
+//sudo cp ~/go/bin/swag /usr/bin/
 //swag init
 // access doc
 http://localhost/docs/index.html

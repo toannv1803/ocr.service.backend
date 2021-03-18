@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/copier"
 	ImageInterface "ocr.service.backend/app/image/interface"
 	ImageUseCase "ocr.service.backend/app/image/usecase"
 	"ocr.service.backend/config"
@@ -27,9 +28,9 @@ type RabbitMQLogin = module.RabbitMQLogin
 // @Summary image
 // @Description get list image
 // @start_time default
-// @Param image_id path string false "image id"
+// @Param image_id path string true "image id"
 // @Param Authorization header string true "'Bearer ' + token"
-// @Success 200 {object} []model.Image
+// @Success 200 {object} model.Image
 // @Router /api/v1/auth/image/{image_id} [get]
 func (q *ImageDelivery) GetById(c *gin.Context) {
 	var agent model.Agent
@@ -51,7 +52,7 @@ func (q *ImageDelivery) GetById(c *gin.Context) {
 			c.String(404, "not found")
 			return
 		}
-		c.JSON(200, arrImage)
+		c.JSON(200, arrImage[0])
 		return
 	} else {
 		c.String(400, "require param image_id")
@@ -63,8 +64,7 @@ func (q *ImageDelivery) GetById(c *gin.Context) {
 // @Summary image
 // @Description get list image
 // @start_time default
-// @Param id query string false "image id"
-// @Param user_id query string false "user id"
+// @Param _ query model.ImageFilter true "_"
 // @Param Authorization header string true "'Bearer ' + token"
 // @Param status query string false "status"
 // @Success 200 {object} []model.Image
@@ -74,9 +74,11 @@ func (q *ImageDelivery) Gets(c *gin.Context) {
 	if v, ok := c.Get("agent"); ok {
 		agent = v.(model.Agent)
 	}
-	var filter model.Image
+	var filter model.ImageFilter
+	var image model.Image
 	if c.BindQuery(&filter) == nil {
-		arrImage, err := q.useCase.Gets(agent, filter)
+		copier.Copy(&image, &filter)
+		arrImage, err := q.useCase.Gets(agent, image)
 		if err != nil {
 			switch err.Error() {
 			case "not found role":
@@ -103,7 +105,7 @@ func (q *ImageDelivery) Gets(c *gin.Context) {
 // @Summary image
 // @Description update image
 // @start_time default
-// @Param image_id path string false "image id"
+// @Param image_id path string true "image id"
 // @Param Authorization header string true "'Bearer ' + token"
 // @Param body body model.ImageUpdate true "image content"
 // @Success 200 {string} string	""

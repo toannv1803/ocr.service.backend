@@ -25,7 +25,6 @@ definitions:
     type: object
 info:
   contact: {}
-  license: {}
   title: OCR BACKEND API
   version: "1.0"
 paths:
@@ -36,6 +35,7 @@ paths:
       - description: image id
         in: path
         name: image_id
+        required: true
         type: string
       - description: '''Bearer '' + token'
         in: header
@@ -46,9 +46,7 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/model.Image'
-            type: array
+            $ref: '#/definitions/model.Image'
       summary: image
       tags:
       - Images
@@ -58,6 +56,7 @@ paths:
       - description: image id
         in: path
         name: image_id
+        required: true
         type: string
       - description: '''Bearer '' + token'
         in: header
@@ -82,12 +81,16 @@ paths:
     get:
       description: get list image
       parameters:
-      - description: image id
-        in: query
+      - in: query
+        name: block_id
+        type: string
+      - in: query
         name: id
         type: string
-      - description: user id
-        in: query
+      - in: query
+        name: status
+        type: string
+      - in: query
         name: user_id
         type: string
       - description: '''Bearer '' + token'

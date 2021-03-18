@@ -9,6 +9,7 @@ import (
 	ImageDelivery "ocr.service.backend/app/image/delivery"
 	ImageInterface "ocr.service.backend/app/image/interface"
 	ImageRepository "ocr.service.backend/app/image/repository"
+	ObjectInterface "ocr.service.backend/app/object/interface"
 	"ocr.service.backend/config"
 	"ocr.service.backend/model"
 	"ocr.service.backend/module"
@@ -29,9 +30,12 @@ var CONFIG, _ = config.NewConfig(nil)
 // @Summary upload, download object
 // @Description upload object
 // @start_time default
-// @Param request_id header string false "add request id"
-// @Param file formData string false "add file multipart/form-data"
+// @Param block_id header string false "add block id"
+// @Param file formData file true "add file multipart/form-data"
 // @Success 200 {object} model.Image
+// @failure 400 {string} string	"some info"
+// @failure 404 {string} string	"not found"
+// @failure 500 {string} string	"..."
 // @Router /api/v1/object [post]
 func (q *ObjectDelivery) Upload(c *gin.Context) {
 	// upload
@@ -65,12 +69,12 @@ func (q *ObjectDelivery) Upload(c *gin.Context) {
 	}
 	// update database
 	image := model.Image{
-		Id:        uuid.New().String(),
-		UserId:    userId, // get from jwt
-		RequestId: c.Request.Header.Get("request_id"),
-		Path:      imagePath,
-		Status:    "pending",
-		CreateAt:  time.Now().Format(time.RFC3339),
+		Id:       uuid.New().String(),
+		UserId:   userId, // get from jwt
+		BlockId:  c.Request.Header.Get("block_id"),
+		Path:     imagePath,
+		Status:   "pending",
+		CreateAt: time.Now().Format(time.RFC3339),
 	}
 	_, err = q.imageRepository.InsertOne(image)
 	if err != nil {
@@ -91,14 +95,15 @@ func (q *ObjectDelivery) Upload(c *gin.Context) {
 // @Summary upload, download object
 // @Description download object
 // @start_time default
-// @Param id query string false "image id"
-// @Param user_id query string false "user id"
-// @Param status query string false "status"
+// @Param id path string true "object id"
 // @Success 200 {object} []byte
-// @Router /api/v1/object [get]
-func (q *ObjectDelivery) Download(c *gin.Context) {
-	imageId := c.Query("id")
-	arrImage, err := q.imageRepository.Get(model.Image{Id: imageId})
+// @failure 400 {string} string	"some info"
+// @failure 404 {string} string	"not found"
+// @failure 500 {string} string	"..."
+// @Router /api/v1/object/{id} [get]
+func (q *ObjectDelivery) DownloadById(c *gin.Context) {
+	id := c.Param("id")
+	arrImage, err := q.imageRepository.Get(model.Image{Id: id})
 	if err != nil {
 		c.String(500, fmt.Sprintf("read from db failed"))
 	}
@@ -114,7 +119,7 @@ func (q *ObjectDelivery) Download(c *gin.Context) {
 	io.Copy(c.Writer, f)
 }
 
-func NewObjectDelivery() (*ObjectDelivery, error) {
+func NewObjectDelivery() (ObjectInterface.IObjectDelivery, error) {
 	var q ObjectDelivery
 	var err error
 	ok, err := module.Exists(CONFIG.GetString("OBJECT_PATH"))

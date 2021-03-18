@@ -28,12 +28,13 @@ func main() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	router.PUT("/api/v1/object", objectDelivery.Upload)
+	router.GET("/api/v1/object/:id", objectDelivery.DownloadById)
 	router.POST("/api/v1/object", objectDelivery.Upload)
-	router.GET("/api/v1/object", objectDelivery.Download)
+	router.PUT("/api/v1/object", objectDelivery.Upload)
 
+	router.GET("/api/v1/image/:image_id", imageDelivery.GetById)
+	router.POST("/api/v1/image/:image_id", imageDelivery.UpdateById)
 	router.GET("/api/v1/images", imageDelivery.Gets)
-	router.POST("/api/v1/images", imageDelivery.Update)
 
 	// swagger
 	router.GET("/swagger/swagger.json", func(c *gin.Context) {

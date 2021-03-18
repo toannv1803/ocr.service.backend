@@ -25,6 +25,66 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/v1/image/{image_id}": {
+            "get": {
+                "description": "get list image",
+                "tags": [
+                    "Images"
+                ],
+                "summary": "image",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "image id",
+                        "name": "image_id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Image"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "update image",
+                "tags": [
+                    "Images"
+                ],
+                "summary": "image",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "image id",
+                        "name": "image_id",
+                        "in": "path"
+                    },
+                    {
+                        "description": "image content",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.ImageUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/images": {
             "get": {
                 "description": "get list image",
@@ -63,32 +123,51 @@ var doc = `{
                         }
                     }
                 }
-            },
+            }
+        },
+        "/api/v1/object": {
             "post": {
-                "description": "get list image",
+                "description": "upload object",
                 "tags": [
-                    "Images"
+                    "Object"
                 ],
-                "summary": "image",
+                "summary": "upload, download object",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "image id",
-                        "name": "id",
-                        "in": "query"
+                        "description": "add block id",
+                        "name": "block_id",
+                        "in": "header"
                     },
                     {
-                        "description": "image content",
-                        "name": "data",
-                        "in": "body",
-                        "schema": {
-                            "type": "string"
-                        }
+                        "type": "file",
+                        "description": "add file multipart/form-data",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Image"
+                        }
+                    },
+                    "400": {
+                        "description": "some info",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "...",
                         "schema": {
                             "type": "string"
                         }
@@ -96,7 +175,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/object": {
+        "/api/v1/object/{id}": {
             "get": {
                 "description": "download object",
                 "tags": [
@@ -106,21 +185,10 @@ var doc = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "image id",
+                        "description": "object id",
                         "name": "id",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "user id",
-                        "name": "user_id",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "status",
-                        "name": "status",
-                        "in": "query"
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -132,34 +200,23 @@ var doc = `{
                                 "type": "integer"
                             }
                         }
-                    }
-                }
-            },
-            "post": {
-                "description": "upload object",
-                "tags": [
-                    "Object"
-                ],
-                "summary": "upload, download object",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "add request id",
-                        "name": "request_id",
-                        "in": "header"
                     },
-                    {
-                        "type": "string",
-                        "description": "add file multipart/form-data",
-                        "name": "file",
-                        "in": "formData"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
+                    "400": {
+                        "description": "some info",
                         "schema": {
-                            "$ref": "#/definitions/model.Image"
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "...",
+                        "schema": {
+                            "type": "string"
                         }
                     }
                 }
@@ -170,6 +227,9 @@ var doc = `{
         "model.Image": {
             "type": "object",
             "properties": {
+                "block_id": {
+                    "type": "string"
+                },
                 "create_at": {
                     "type": "string"
                 },
@@ -185,13 +245,18 @@ var doc = `{
                 "path": {
                     "type": "string"
                 },
-                "request_id": {
-                    "type": "string"
-                },
                 "status": {
                     "type": "string"
                 },
                 "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.ImageUpdate": {
+            "type": "object",
+            "properties": {
+                "data": {
                     "type": "string"
                 }
             }

@@ -1,6 +1,8 @@
 definitions:
   model.Image:
     properties:
+      block_id:
+        type: string
       create_at:
         type: string
       data:
@@ -11,11 +13,14 @@ definitions:
         type: string
       path:
         type: string
-      request_id:
-        type: string
       status:
         type: string
       user_id:
+        type: string
+    type: object
+  model.ImageUpdate:
+    properties:
+      data:
         type: string
     type: object
 info:
@@ -24,6 +29,45 @@ info:
   title: OCR BACKEND API
   version: "1.0"
 paths:
+  /api/v1/image/{image_id}:
+    get:
+      description: get list image
+      parameters:
+      - description: image id
+        in: path
+        name: image_id
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Image'
+            type: array
+      summary: image
+      tags:
+      - Images
+    post:
+      description: update image
+      parameters:
+      - description: image id
+        in: path
+        name: image_id
+        type: string
+      - description: image content
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/model.ImageUpdate'
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: image
+      tags:
+      - Images
   /api/v1/images:
     get:
       description: get list image
@@ -50,41 +94,47 @@ paths:
       summary: image
       tags:
       - Images
+  /api/v1/object:
     post:
-      description: get list image
+      description: upload object
       parameters:
-      - description: image id
-        in: query
-        name: id
+      - description: add block id
+        in: header
+        name: block_id
         type: string
-      - description: image content
-        in: body
-        name: data
-        schema:
-          type: string
+      - description: add file multipart/form-data
+        in: formData
+        name: file
+        required: true
+        type: file
       responses:
         "200":
           description: OK
           schema:
+            $ref: '#/definitions/model.Image'
+        "400":
+          description: some info
+          schema:
             type: string
-      summary: image
+        "404":
+          description: not found
+          schema:
+            type: string
+        "500":
+          description: '...'
+          schema:
+            type: string
+      summary: upload, download object
       tags:
-      - Images
-  /api/v1/object:
+      - Object
+  /api/v1/object/{id}:
     get:
       description: download object
       parameters:
-      - description: image id
-        in: query
+      - description: object id
+        in: path
         name: id
-        type: string
-      - description: user id
-        in: query
-        name: user_id
-        type: string
-      - description: status
-        in: query
-        name: status
+        required: true
         type: string
       responses:
         "200":
@@ -93,25 +143,18 @@ paths:
             items:
               type: integer
             type: array
-      summary: upload, download object
-      tags:
-      - Object
-    post:
-      description: upload object
-      parameters:
-      - description: add request id
-        in: header
-        name: request_id
-        type: string
-      - description: add file multipart/form-data
-        in: formData
-        name: file
-        type: string
-      responses:
-        "200":
-          description: OK
+        "400":
+          description: some info
           schema:
-            $ref: '#/definitions/model.Image'
+            type: string
+        "404":
+          description: not found
+          schema:
+            type: string
+        "500":
+          description: '...'
+          schema:
+            type: string
       summary: upload, download object
       tags:
       - Object

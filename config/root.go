@@ -24,6 +24,8 @@ func (q Config) Refresh() {
 	q.viper.SetDefault("GET_ALLOWED_IPS", []string{})
 	q.viper.SetDefault("OBJECT_PATH", "/data/object")
 
+	q.viper.SetDefault("SECRET", "FB1QgTi33BoWQr6f")
+
 	q.viper.SetDefault("IMAGE_TASK_QUEUE", "orc.image.task")
 	q.viper.SetDefault("IMAGE_SUCCESS_QUEUE", "orc.image.success")
 	q.viper.SetDefault("IMAGE_ERROR_QUEUE", "orc.image.error")

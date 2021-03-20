@@ -8,6 +8,7 @@ import (
 	ImageInterface "ocr.service.backend/app/image/interface"
 	ImageUseCase "ocr.service.backend/app/image/usecase"
 	"ocr.service.backend/config"
+	"ocr.service.backend/enum"
 	"ocr.service.backend/model"
 	module "ocr.service.backend/module/rabbitmq"
 )
@@ -53,6 +54,44 @@ func (q *ImageDelivery) GetById(c *gin.Context) {
 			return
 		}
 		c.JSON(200, arrImage[0])
+		return
+	} else {
+		c.String(400, "require param image_id")
+		return
+	}
+}
+
+// @tags Images
+// @Summary image
+// @Description get list image
+// @start_time default
+// @Param image_id path string true "image id"
+// @Param Authorization header string true "'Bearer ' + token"
+// @Success 200 {string} string	""
+// @Router /api/v1/auth/image/{image_id} [delete]
+func (q *ImageDelivery) Delete(c *gin.Context) {
+	var agent model.Agent
+	if v, ok := c.Get("agent"); ok {
+		agent = v.(model.Agent)
+	}
+	var filter model.ImageFilter
+	var image model.Image
+	if c.BindQuery(&filter) == nil {
+		copier.Copy(&image, &filter)
+		nDel, err := q.useCase.Delete(agent, image)
+		if err != nil {
+			switch err.Error() {
+			case "not found role":
+				c.String(401, "not allow")
+			default:
+				c.String(500, err.Error())
+			}
+		}
+		if nDel == 0 {
+			c.String(404, "not found")
+			return
+		}
+		c.JSON(200, "")
 		return
 	} else {
 		c.String(400, "require param image_id")
@@ -159,13 +198,13 @@ func (q *ImageDelivery) HandleTaskSuccess(message []byte, messageAction *module.
 		messageAction.Ack()
 		return
 	}
+	fmt.Println(image)
 	if image.Id == "" {
 		fmt.Println("[ERROR] empty id")
 		messageAction.Ack()
 		return
 	}
-	var agent model.Agent
-	_, err = q.useCase.Update(agent, model.Image{Id: image.Id}, image)
+	_, err = q.useCase.Update(model.Agent{UserId: image.UserId, Role: enum.RoleUser}, model.Image{Id: image.Id}, image)
 	if err != nil {
 		fmt.Println(err)
 		messageAction.Reject()

@@ -25,19 +25,14 @@ func NewAuth() *jwt.GinJWTMiddleware {
 		IdentityHandler: func(c *gin.Context) interface{} {
 			fmt.Println("IdentityHandler")
 			claims := jwt.ExtractClaims(c)
-			claim := model.Claim{
+			return &model.Claim{
 				UserId: claims[identityKey].(string),
 				Role:   claims["role"].(string),
 			}
-			if claim.UserId == "" {
-				claim.UserId = enum.RoleAnonymous
-				claim.Role = enum.RoleAnonymous
-			}
-			return &claim
 		},
 		Authorizator: func(data interface{}, c *gin.Context) bool {
 			fmt.Println("Authorizator")
-			if claim, ok := data.(*model.Claim); ok && (claim.Role == enum.RoleUser || claim.Role == enum.RoleAdmin || claim.Role == enum.RoleAnonymous) {
+			if claim, ok := data.(*model.Claim); ok && (claim.Role == enum.RoleUser || claim.Role == enum.RoleAdmin) {
 				agent := model.Agent{
 					UserId: claim.UserId,
 					Role:   claim.Role,

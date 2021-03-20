@@ -47,8 +47,26 @@ func (q *ImageUseCase) Update(agent model.Agent, filter model.Image, image model
 		filter.UserId = agent.UserId
 		return q.repository.Update(filter, image)
 	default: //enum.RoleAnonymous
-		filter.UserId = agent.UserId
+		filter.UserId = enum.RoleAnonymous
 		return q.repository.Update(filter, image)
+	}
+}
+func (q *ImageUseCase) Delete(agent model.Agent, filter model.Image) (int64, error) {
+	if filter == (model.Image{}) {
+		return 0, errors.New("delete image require at least  query")
+	}
+	switch agent.Role {
+	case enum.RoleAdmin:
+		return q.repository.Delete(filter)
+	case enum.RoleUser:
+		if agent.UserId == "" {
+			return 0, errors.New("not found user_id")
+		}
+		filter.UserId = agent.UserId
+		return q.repository.Delete(filter)
+	default: //enum.RoleAnonymous
+		filter.UserId = enum.RoleAnonymous
+		return q.repository.Delete(filter)
 	}
 }
 

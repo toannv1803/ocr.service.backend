@@ -38,6 +38,14 @@ func (q *ImageRepository) Update(filter model.Image, user model.Image) (int64, e
 	}
 	return nModify, err
 }
+func (q *ImageRepository) Delete(filter model.Image) (int64, error) {
+	nDelete, err := q.db.Delete(filter)
+	if err != nil {
+		fmt.Println(err)
+		return 0, errors.New("delete failed")
+	}
+	return nDelete, nil
+}
 
 func NewImageRepository() (ImageInterface.IImageRepository, error) {
 	var q ImageRepository

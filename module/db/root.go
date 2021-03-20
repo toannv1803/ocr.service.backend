@@ -4,6 +4,7 @@ type IDB interface {
 	Get(filter interface{}, res interface{}) error
 	InsertOne(data interface{}) (string, error)
 	Update(filter interface{}, data interface{}) (int64, error)
+	Delete(image interface{}) (int64, error)
 }
 
 func NewDB(dbName string, collectionName string) (IDB, error) {

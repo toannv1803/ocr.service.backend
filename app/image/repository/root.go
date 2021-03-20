@@ -47,6 +47,15 @@ func (q *ImageRepository) Delete(filter model.Image) (int64, error) {
 	return nDelete, nil
 }
 
+func (q *ImageRepository) Distinct(field string, filter interface{}) ([]interface{}, error) {
+	arrI, err := q.db.Distinct(field, filter)
+	if err != nil {
+		fmt.Println(err)
+		return nil, errors.New("get distinct failed")
+	}
+	return arrI, nil
+}
+
 func NewImageRepository() (ImageInterface.IImageRepository, error) {
 	var q ImageRepository
 	var err error

@@ -66,6 +66,36 @@ func (q *ImageDelivery) GetById(c *gin.Context) {
 // @Summary image
 // @Description get list image
 // @start_time default
+// @Param Authorization header string true "'Bearer ' + token"
+// @Success 200 {object} []string
+// @Router /api/v1/auth/images/block-ids [get]
+func (q *ImageDelivery) GetListBlockId(c *gin.Context) {
+	var agent model.Agent
+	if v, ok := c.Get("agent"); ok {
+		agent = v.(model.Agent)
+	}
+	arrBlockId, err := q.useCase.GetListBlockId(agent)
+	if err != nil {
+		switch err.Error() {
+		case "not found role":
+			c.String(401, "not allow")
+		default:
+			c.String(500, err.Error())
+		}
+		return
+	}
+	if len(arrBlockId) == 0 {
+		c.String(404, "not found")
+		return
+	}
+	c.JSON(200, arrBlockId)
+	return
+}
+
+// @tags Images
+// @Summary image
+// @Description get list image
+// @start_time default
 // @Param _ query model.ImageFilter true "_"
 // @Param Authorization header string true "'Bearer ' + token"
 // @Success 200 {string} string	""

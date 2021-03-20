@@ -70,6 +70,40 @@ func (q *ImageUseCase) Delete(agent model.Agent, filter model.Image) (int64, err
 	}
 }
 
+func (q *ImageUseCase) GetListBlockId(agent model.Agent) ([]string, error) {
+	var arrString []string
+	switch agent.Role {
+	case enum.RoleAdmin:
+		arrI, err := q.repository.Distinct("block_id", model.Image{UserId: agent.UserId})
+		if err != nil {
+			return nil, err
+		}
+		for i := range arrI {
+			arrString = append(arrString, arrI[i].(string))
+		}
+	case enum.RoleUser:
+		if agent.UserId == "" {
+			return nil, errors.New("not found user_id")
+		}
+		arrI, err := q.repository.Distinct("block_id", model.Image{UserId: agent.UserId})
+		if err != nil {
+			return nil, err
+		}
+		for i := range arrI {
+			arrString = append(arrString, arrI[i].(string))
+		}
+	default: //enum.RoleAnonymous
+		arrI, err := q.repository.Distinct("block_id", model.Image{UserId: enum.RoleAnonymous})
+		if err != nil {
+			return nil, err
+		}
+		for i := range arrI {
+			arrString = append(arrString, arrI[i].(string))
+		}
+	}
+	return arrString, nil
+}
+
 func NewImageUseCase() (ImageInterface.IImageUseCase, error) {
 	var q ImageUseCase
 	var err error

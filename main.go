@@ -53,6 +53,7 @@ func main() {
 			routerApiAuth.POST("/image/:image_id", imageDelivery.UpdateById)
 			routerApiAuth.GET("/images", imageDelivery.Gets)
 			routerApiAuth.DELETE("/images", imageDelivery.Delete)
+			routerApiAuth.GET("/images/block-ids", imageDelivery.GetListBlockId)
 		}
 	}
 

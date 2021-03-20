@@ -140,6 +140,25 @@ paths:
       summary: image
       tags:
       - Images
+  /api/v1/auth/images/block-ids:
+    get:
+      description: get list image
+      parameters:
+      - description: '''Bearer '' + token'
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: string
+            type: array
+      summary: image
+      tags:
+      - Images
   /api/v1/auth/object:
     post:
       description: upload object

@@ -40,6 +40,12 @@ func (q *mongoRepository) Get(filter interface{}, res interface{}) error {
 	defer cur.Close(ctx)
 	return nil
 }
+func (q *mongoRepository) Distinct(field string, filter interface{}) ([]interface{}, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	return q.collection.Distinct(ctx, field, filter)
+}
+
 func (q *mongoRepository) InsertOne(data interface{}) (string, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()

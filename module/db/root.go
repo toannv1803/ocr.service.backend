@@ -5,6 +5,7 @@ type IDB interface {
 	InsertOne(data interface{}) (string, error)
 	Update(filter interface{}, data interface{}) (int64, error)
 	Delete(image interface{}) (int64, error)
+	Distinct(field string, filter interface{}) ([]interface{}, error)
 }
 
 func NewDB(dbName string, collectionName string) (IDB, error) {

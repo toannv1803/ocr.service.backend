@@ -8,6 +8,7 @@ import (
 type IImageDelivery interface {
 	GetById(c *gin.Context)
 	Gets(c *gin.Context)
+	GetListBlockId(c *gin.Context)
 	UpdateById(c *gin.Context)
 	Delete(c *gin.Context)
 	PublishTask(image model.Image) error
@@ -18,6 +19,7 @@ type IImageRepository interface {
 	InsertOne(image model.Image) (string, error)
 	Update(filter model.Image, image model.Image) (int64, error)
 	Delete(filter model.Image) (int64, error)
+	Distinct(field string, filter interface{}) ([]interface{}, error)
 }
 
 type IImageUseCase interface {
@@ -25,4 +27,5 @@ type IImageUseCase interface {
 	InsertOne(agent model.Agent, image model.Image) (string, error)
 	Update(agent model.Agent, filter model.Image, image model.Image) (int64, error)
 	Delete(agent model.Agent, id model.Image) (int64, error)
+	GetListBlockId(agent model.Agent) ([]string, error)
 }

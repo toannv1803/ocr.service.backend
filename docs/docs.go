@@ -196,6 +196,35 @@ var doc = `{
                 }
             }
         },
+        "/api/v1/auth/images/block-ids": {
+            "get": {
+                "description": "get list image",
+                "tags": [
+                    "Images"
+                ],
+                "summary": "image",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "'Bearer ' + token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/auth/object": {
             "post": {
                 "description": "upload object",

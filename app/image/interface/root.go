@@ -9,6 +9,7 @@ type IImageDelivery interface {
 	GetById(c *gin.Context)
 	Gets(c *gin.Context)
 	UpdateById(c *gin.Context)
+	Delete(c *gin.Context)
 	PublishTask(image model.Image) error
 }
 

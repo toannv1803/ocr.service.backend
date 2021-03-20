@@ -53,7 +53,7 @@ func (q *ImageUseCase) Update(agent model.Agent, filter model.Image, image model
 }
 func (q *ImageUseCase) Delete(agent model.Agent, filter model.Image) (int64, error) {
 	if filter == (model.Image{}) {
-		return 0, errors.New("delete image require at least  query")
+		return 0, errors.New("delete image require at least one query")
 	}
 	switch agent.Role {
 	case enum.RoleAdmin:

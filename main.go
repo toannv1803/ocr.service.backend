@@ -52,6 +52,7 @@ func main() {
 			routerApiAuth.GET("/image/:image_id", imageDelivery.GetById)
 			routerApiAuth.POST("/image/:image_id", imageDelivery.UpdateById)
 			routerApiAuth.GET("/images", imageDelivery.Gets)
+			routerApiAuth.DELETE("/images", imageDelivery.Delete)
 		}
 	}
 

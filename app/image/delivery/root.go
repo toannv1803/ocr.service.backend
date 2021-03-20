@@ -48,6 +48,7 @@ func (q *ImageDelivery) GetById(c *gin.Context) {
 			default:
 				c.String(500, err.Error())
 			}
+			return
 		}
 		if len(arrImage) == 0 {
 			c.String(404, "not found")
@@ -65,10 +66,10 @@ func (q *ImageDelivery) GetById(c *gin.Context) {
 // @Summary image
 // @Description get list image
 // @start_time default
-// @Param image_id path string true "image id"
+// @Param _ query model.ImageFilter true "_"
 // @Param Authorization header string true "'Bearer ' + token"
 // @Success 200 {string} string	""
-// @Router /api/v1/auth/image/{image_id} [delete]
+// @Router /api/v1/auth/images [delete]
 func (q *ImageDelivery) Delete(c *gin.Context) {
 	var agent model.Agent
 	if v, ok := c.Get("agent"); ok {
@@ -83,9 +84,12 @@ func (q *ImageDelivery) Delete(c *gin.Context) {
 			switch err.Error() {
 			case "not found role":
 				c.String(401, "not allow")
+			case "delete image require at least one query":
+				c.String(400, err.Error())
 			default:
 				c.String(500, err.Error())
 			}
+			return
 		}
 		if nDel == 0 {
 			c.String(404, "not found")
@@ -166,6 +170,7 @@ func (q *ImageDelivery) UpdateById(c *gin.Context) {
 			default:
 				c.String(500, err.Error())
 			}
+			return
 		}
 		if nModify == 0 {
 			c.String(404, "not found")
@@ -198,7 +203,6 @@ func (q *ImageDelivery) HandleTaskSuccess(message []byte, messageAction *module.
 		messageAction.Ack()
 		return
 	}
-	fmt.Println(image)
 	if image.Id == "" {
 		fmt.Println("[ERROR] empty id")
 		messageAction.Ack()

@@ -78,6 +78,34 @@ paths:
       tags:
       - Images
   /api/v1/auth/images:
+    delete:
+      description: get list image
+      parameters:
+      - in: query
+        name: block_id
+        type: string
+      - in: query
+        name: id
+        type: string
+      - in: query
+        name: status
+        type: string
+      - in: query
+        name: user_id
+        type: string
+      - description: '''Bearer '' + token'
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: image
+      tags:
+      - Images
     get:
       description: get list image
       parameters:

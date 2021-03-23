@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -19,6 +20,7 @@ var CONFIG, _ = config.NewConfig(nil)
 // @version 1.0
 func main() {
 	router := gin.Default()
+	router.Use(cors.Default())
 	objectDelivery, err := ObjectDelivery.NewObjectDelivery()
 	if err != nil {
 		fmt.Println(err)

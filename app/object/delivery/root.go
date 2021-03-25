@@ -115,25 +115,41 @@ func (q *ObjectDelivery) Upload(c *gin.Context) {
 // @Router /api/v1/auth/object/{id} [get]
 func (q *ObjectDelivery) DownloadById(c *gin.Context) {
 	id := c.Param("id")
-	if v, ok := c.Get("agent"); ok {
-		agent := v.(model.Agent)
-		arrImage, err := q.imageUseCase.Gets(agent, model.Image{Id: id})
-		if err != nil {
-			c.String(500, "read from db failed")
-		}
-		if len(arrImage) == 0 {
-			c.String(404, "not found")
-			return
-		}
-		f, err := os.Open(arrImage[0].Path)
-		if err != nil {
-			c.String(500, "read file failed")
-		}
-		defer f.Close()
-		io.Copy(c.Writer, f)
-	} else {
-		c.String(400, "not allow")
+	//if v, ok := c.Get("agent"); ok {
+	//agent := v.(model.Agent)
+	var agent = model.Agent{Role: "admin"}
+	arrImage, err := q.imageUseCase.Gets(agent, model.Image{Id: id})
+	if err != nil {
+		c.String(500, "read from db failed")
 	}
+	if len(arrImage) == 0 {
+		c.String(404, "not found")
+		return
+	}
+	f, err := os.Open(arrImage[0].Path)
+	if err != nil {
+		c.String(500, "read file failed")
+		return
+	}
+	defer f.Close()
+	io.Copy(c.Writer, f)
+	//} else {
+	//	c.String(400, "not allow")
+	//}
+
+}
+
+// @tags Object
+// @Summary download object
+// @Description download object
+// @start_time default
+// @Param id path string true "object id"
+// @Success 200 {object} []byte
+// @failure 400 {string} string	"some info"
+// @failure 404 {string} string	"not found"
+// @failure 500 {string} string	"..."
+// @Router /api/v1/object/{id} [get]
+func (q *ObjectDelivery) downloadByIdNoAuth(c *gin.Context) {
 
 }
 func NewObjectDelivery() (ObjectInterface.IObjectDelivery, error) {

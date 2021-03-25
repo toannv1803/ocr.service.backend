@@ -1,15 +1,4 @@
 definitions:
-  model.ImageFilter:
-    properties:
-      block_id:
-        type: string
-      id:
-        type: string
-      status:
-        type: string
-      user_id:
-        type: string
-    type: object
   model.ImageResponse:
     properties:
       block_id:
@@ -34,7 +23,6 @@ definitions:
     type: object
 info:
   contact: {}
-  license: {}
   title: OCR BACKEND API
   version: "1.0"
 paths:
@@ -219,6 +207,37 @@ paths:
       - description: '''Bearer '' + token'
         in: header
         name: Authorization
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: integer
+            type: array
+        "400":
+          description: some info
+          schema:
+            type: string
+        "404":
+          description: not found
+          schema:
+            type: string
+        "500":
+          description: '...'
+          schema:
+            type: string
+      summary: download object
+      tags:
+      - Object
+  /api/v1/object/{id}:
+    get:
+      description: download object
+      parameters:
+      - description: object id
+        in: path
+        name: id
         required: true
         type: string
       responses:

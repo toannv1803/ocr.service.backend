@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/jinzhu/copier"
 	"io"
 	ImageDelivery "ocr.service.backend/app/image/delivery"
 	ImageInterface "ocr.service.backend/app/image/interface"
@@ -26,13 +27,13 @@ type ObjectDelivery struct {
 var CONFIG, _ = config.NewConfig(nil)
 
 // @tags Object
-// @Summary upload, download object
+// @Summary upload object
 // @Description upload object
 // @start_time default
 // @Param block_id header string false "add block id"
 // @Param Authorization header string true "'Bearer ' + token"
 // @Param file formData file true "add file multipart/form-data"
-// @Success 200 {object} model.Image
+// @Success 200 {object} model.ImageResponse
 // @failure 400 {string} string	"some info"
 // @failure 404 {string} string	"not found"
 // @failure 500 {string} string	"..."
@@ -88,17 +89,21 @@ func (q *ObjectDelivery) Upload(c *gin.Context) {
 		return
 	}
 	// send message
-	err = q.imageDelivery.PublishTask(image)
+	var imageTask model.ImageTask
+	copier.Copy(&imageTask, &image)
+	err = q.imageDelivery.PublishTask(imageTask)
 	if err != nil {
 		c.String(500, "rabbitmq failed")
 		return
 	}
+	var imageResponse model.ImageResponse
+	copier.Copy(&imageResponse, &image)
 	// return result
-	c.JSON(200, image)
+	c.JSON(200, imageResponse)
 }
 
 // @tags Object
-// @Summary upload, download object
+// @Summary download object
 // @Description download object
 // @start_time default
 // @Param id path string true "object id"

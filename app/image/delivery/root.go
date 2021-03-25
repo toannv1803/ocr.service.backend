@@ -31,7 +31,7 @@ type RabbitMQLogin = module.RabbitMQLogin
 // @start_time default
 // @Param image_id path string true "image id"
 // @Param Authorization header string true "'Bearer ' + token"
-// @Success 200 {object} model.Image
+// @Success 200 {object} model.ImageResponse
 // @Router /api/v1/auth/image/{image_id} [get]
 func (q *ImageDelivery) GetById(c *gin.Context) {
 	var agent model.Agent
@@ -40,7 +40,8 @@ func (q *ImageDelivery) GetById(c *gin.Context) {
 	}
 	imageId := c.Param("image_id")
 	if imageId != "" {
-		arrImage, err := q.useCase.Gets(agent, model.Image{Id: imageId})
+		var arrImageResponse []model.ImageResponse
+		err := q.useCase.GetsCustom(agent, model.Image{Id: imageId}, &arrImageResponse)
 		if err != nil {
 			switch err.Error() {
 			case "not found role":
@@ -50,11 +51,11 @@ func (q *ImageDelivery) GetById(c *gin.Context) {
 			}
 			return
 		}
-		if len(arrImage) == 0 {
+		if len(arrImageResponse) == 0 {
 			c.String(404, "not found")
 			return
 		}
-		c.JSON(200, arrImage[0])
+		c.JSON(200, arrImageResponse[0])
 		return
 	} else {
 		c.String(400, "require param image_id")
@@ -140,7 +141,7 @@ func (q *ImageDelivery) Delete(c *gin.Context) {
 // @Param _ query model.ImageFilter true "_"
 // @Param Authorization header string true "'Bearer ' + token"
 // @Param status query string false "status"
-// @Success 200 {object} []model.Image
+// @Success 200 {object} []model.ImageResponse
 // @Router /api/v1/auth/images [get]
 func (q *ImageDelivery) Gets(c *gin.Context) {
 	var agent model.Agent
@@ -151,7 +152,8 @@ func (q *ImageDelivery) Gets(c *gin.Context) {
 	var image model.Image
 	if c.BindQuery(&filter) == nil {
 		copier.Copy(&image, &filter)
-		arrImage, err := q.useCase.Gets(agent, image)
+		var arrImageResponse []model.ImageResponse
+		err := q.useCase.GetsCustom(agent, image, &arrImageResponse)
 		if err != nil {
 			switch err.Error() {
 			case "not found role":
@@ -161,11 +163,11 @@ func (q *ImageDelivery) Gets(c *gin.Context) {
 			}
 			return
 		}
-		if len(arrImage) == 0 {
+		if len(arrImageResponse) == 0 {
 			c.String(404, "not found")
 			return
 		}
-		c.JSON(200, arrImage)
+		c.JSON(200, arrImageResponse)
 		return
 	} else {
 		fmt.Println(c.BindQuery(&filter))
@@ -214,7 +216,7 @@ func (q *ImageDelivery) UpdateById(c *gin.Context) {
 	}
 }
 
-func (q *ImageDelivery) PublishTask(image model.Image) error {
+func (q *ImageDelivery) PublishTask(image model.ImageTask) error {
 	data, err := json.Marshal(image)
 	if err != nil {
 		return err

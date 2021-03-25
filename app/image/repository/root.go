@@ -22,6 +22,16 @@ func (q *ImageRepository) Get(filter model.Image) ([]model.Image, error) {
 	}
 	return arrUser, err
 }
+
+func (q *ImageRepository) GetCustom(filter model.Image, res interface{}) error {
+	err := q.db.Get(filter, res)
+	if err != nil {
+		fmt.Println(err)
+		return errors.New("get from db failed")
+	}
+	return nil
+}
+
 func (q *ImageRepository) InsertOne(user model.Image) (string, error) {
 	id, err := q.db.InsertOne(user)
 	if err != nil {

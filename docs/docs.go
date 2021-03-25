@@ -19,6 +19,7 @@ var doc = `{
         "description": "{{.Description}}",
         "title": "{{.Title}}",
         "contact": {},
+        "license": {},
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
@@ -51,7 +52,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.Image"
+                            "$ref": "#/definitions/model.ImageResponse"
                         }
                     }
                 }
@@ -145,7 +146,7 @@ var doc = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/model.Image"
+                                "$ref": "#/definitions/model.ImageResponse"
                             }
                         }
                     }
@@ -231,7 +232,7 @@ var doc = `{
                 "tags": [
                     "Object"
                 ],
-                "summary": "upload, download object",
+                "summary": "upload object",
                 "parameters": [
                     {
                         "type": "string",
@@ -258,7 +259,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.Image"
+                            "$ref": "#/definitions/model.ImageResponse"
                         }
                     },
                     "400": {
@@ -288,7 +289,7 @@ var doc = `{
                 "tags": [
                     "Object"
                 ],
-                "summary": "upload, download object",
+                "summary": "download object",
                 "parameters": [
                     {
                         "type": "string",
@@ -338,7 +339,24 @@ var doc = `{
         }
     },
     "definitions": {
-        "model.Image": {
+        "model.ImageFilter": {
+            "type": "object",
+            "properties": {
+                "block_id": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.ImageResponse": {
             "type": "object",
             "properties": {
                 "block_id": {
@@ -354,9 +372,6 @@ var doc = `{
                     "type": "string"
                 },
                 "id": {
-                    "type": "string"
-                },
-                "path": {
                     "type": "string"
                 },
                 "status": {

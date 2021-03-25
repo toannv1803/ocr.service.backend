@@ -1,5 +1,16 @@
 definitions:
-  model.Image:
+  model.ImageFilter:
+    properties:
+      block_id:
+        type: string
+      id:
+        type: string
+      status:
+        type: string
+      user_id:
+        type: string
+    type: object
+  model.ImageResponse:
     properties:
       block_id:
         type: string
@@ -10,8 +21,6 @@ definitions:
       error:
         type: string
       id:
-        type: string
-      path:
         type: string
       status:
         type: string
@@ -25,6 +34,7 @@ definitions:
     type: object
 info:
   contact: {}
+  license: {}
   title: OCR BACKEND API
   version: "1.0"
 paths:
@@ -46,7 +56,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.Image'
+            $ref: '#/definitions/model.ImageResponse'
       summary: image
       tags:
       - Images
@@ -135,7 +145,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/model.Image'
+              $ref: '#/definitions/model.ImageResponse'
             type: array
       summary: image
       tags:
@@ -181,7 +191,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.Image'
+            $ref: '#/definitions/model.ImageResponse'
         "400":
           description: some info
           schema:
@@ -194,7 +204,7 @@ paths:
           description: '...'
           schema:
             type: string
-      summary: upload, download object
+      summary: upload object
       tags:
       - Object
   /api/v1/auth/object/{id}:
@@ -230,7 +240,7 @@ paths:
           description: '...'
           schema:
             type: string
-      summary: upload, download object
+      summary: download object
       tags:
       - Object
 swagger: "2.0"

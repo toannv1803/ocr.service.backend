@@ -3,6 +3,7 @@
     "info": {
         "title": "OCR BACKEND API",
         "contact": {},
+        "license": {},
         "version": "1.0"
     },
     "paths": {
@@ -33,7 +34,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.Image"
+                            "$ref": "#/definitions/model.ImageResponse"
                         }
                     }
                 }
@@ -127,7 +128,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/model.Image"
+                                "$ref": "#/definitions/model.ImageResponse"
                             }
                         }
                     }
@@ -213,7 +214,7 @@
                 "tags": [
                     "Object"
                 ],
-                "summary": "upload, download object",
+                "summary": "upload object",
                 "parameters": [
                     {
                         "type": "string",
@@ -240,7 +241,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.Image"
+                            "$ref": "#/definitions/model.ImageResponse"
                         }
                     },
                     "400": {
@@ -270,7 +271,7 @@
                 "tags": [
                     "Object"
                 ],
-                "summary": "upload, download object",
+                "summary": "download object",
                 "parameters": [
                     {
                         "type": "string",
@@ -320,7 +321,24 @@
         }
     },
     "definitions": {
-        "model.Image": {
+        "model.ImageFilter": {
+            "type": "object",
+            "properties": {
+                "block_id": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.ImageResponse": {
             "type": "object",
             "properties": {
                 "block_id": {
@@ -336,9 +354,6 @@
                     "type": "string"
                 },
                 "id": {
-                    "type": "string"
-                },
-                "path": {
                     "type": "string"
                 },
                 "status": {

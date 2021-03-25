@@ -27,6 +27,23 @@ func (q *ImageUseCase) Gets(agent model.Agent, filter model.Image) ([]model.Imag
 		return q.repository.Get(filter)
 	}
 }
+
+func (q *ImageUseCase) GetsCustom(agent model.Agent, filter model.Image, res interface{}) error {
+	switch agent.Role {
+	case enum.RoleAdmin:
+		return q.repository.GetCustom(filter, res)
+	case enum.RoleUser:
+		if agent.UserId == "" {
+			return errors.New("agent not found user_id")
+		}
+		filter.UserId = agent.UserId
+		return q.repository.GetCustom(filter, res)
+	default: //enum.RoleAnonymous
+		filter.UserId = enum.RoleAnonymous
+		return q.repository.GetCustom(filter, res)
+	}
+}
+
 func (q *ImageUseCase) InsertOne(agent model.Agent, image model.Image) (string, error) {
 	switch agent.Role {
 	case enum.RoleAdmin, enum.RoleUser:

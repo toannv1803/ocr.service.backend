@@ -149,7 +149,9 @@ func (q *ImageUseCase) ExportToExcel(agent model.Agent, filter model.Image) (*by
 	f.SetCellValue("Sheet1", "C1", "DATA")
 	for i := range arrImageResponse {
 		f.SetCellValue("Sheet1", "A"+strconv.Itoa(i+2), i+1)
-		f.SetCellValue("Sheet1", "B"+strconv.Itoa(i+2), "http://localhost:2020/api/v1/object/"+arrImageResponse[i].Id)
+		f.SetCellValue("Sheet1", "B"+strconv.Itoa(i+2), "link")
+		//https://github.com/360EntSecGroup-Skylar/excelize/pull/90
+		f.SetCellHyperLink("Sheet1", "B"+strconv.Itoa(i+2), "http://localhost:2020/api/v1/object/"+arrImageResponse[i].Id, "External")
 		f.SetCellValue("Sheet1", "C"+strconv.Itoa(i+2), arrImageResponse[i].Data)
 	}
 	return f.WriteToBuffer()

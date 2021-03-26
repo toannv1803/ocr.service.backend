@@ -3,6 +3,7 @@ module ocr.service.backend
 go 1.16
 
 require (
+	github.com/360EntSecGroup-Skylar/excelize/v2 v2.3.2 // indirect
 	github.com/appleboy/gin-jwt/v2 v2.6.4 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
 	github.com/gin-contrib/cors v1.3.1 // indirect

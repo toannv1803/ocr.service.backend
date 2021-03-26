@@ -130,9 +130,6 @@ func (q *ObjectDelivery) DownloadById(c *gin.Context) {
 	}
 	defer f.Close()
 	io.Copy(c.Writer, f)
-
-	defer f.Close()
-	io.Copy(c.Writer, f)
 	//} else {
 	//	c.String(400, "not allow")
 	//}

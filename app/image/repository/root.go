@@ -13,23 +13,23 @@ type ImageRepository struct {
 	db db.IDB
 }
 
-func (q *ImageRepository) Get(filter model.Image) ([]model.Image, error) {
+func (q *ImageRepository) Find(filter model.Image, option db.FindOption) ([]model.Image, int64, error) {
 	var arrUser []model.Image
-	err := q.db.Get(filter, &arrUser)
+	total, err := q.db.Find(filter, &arrUser, option)
 	if err != nil {
 		fmt.Println(err)
-		return arrUser, errors.New("get from db failed")
+		return arrUser, 0, errors.New("get from db failed")
 	}
-	return arrUser, err
+	return arrUser, total, err
 }
 
-func (q *ImageRepository) GetCustom(filter model.Image, res interface{}) error {
-	err := q.db.Get(filter, res)
+func (q *ImageRepository) FindCustom(filter model.Image, res interface{}, option db.FindOption) (int64, error) {
+	total, err := q.db.Find(filter, res, option)
 	if err != nil {
 		fmt.Println(err)
-		return errors.New("get from db failed")
+		return 0, errors.New("get from db failed")
 	}
-	return nil
+	return total, nil
 }
 
 func (q *ImageRepository) InsertOne(user model.Image) (string, error) {

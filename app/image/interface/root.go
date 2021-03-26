@@ -3,6 +3,7 @@ package ImageInterface
 import (
 	"github.com/gin-gonic/gin"
 	"ocr.service.backend/model"
+	"ocr.service.backend/module/db"
 )
 
 type IImageDelivery interface {
@@ -15,17 +16,22 @@ type IImageDelivery interface {
 }
 
 type IImageRepository interface {
-	Get(filter model.Image) ([]model.Image, error)
-	GetCustom(filter model.Image, res interface{}) error
+	Find(filter model.Image, option db.FindOption) ([]model.Image, int64, error)
+	FindCustom(filter model.Image, res interface{}, option db.FindOption) (int64, error)
 	InsertOne(image model.Image) (string, error)
 	Update(filter model.Image, image model.Image) (int64, error)
 	Delete(filter model.Image) (int64, error)
 	Distinct(field string, filter interface{}) ([]interface{}, error)
 }
 
+type GetOption struct {
+	Limit int64
+	Skip  int64
+}
+
 type IImageUseCase interface {
-	Gets(agent model.Agent, filter model.Image) ([]model.Image, error)
-	GetsCustom(agent model.Agent, filter model.Image, res interface{}) error
+	Gets(agent model.Agent, filter model.Image, option GetOption) ([]model.Image, int64, error)
+	GetsCustom(agent model.Agent, filter model.Image, res interface{}, option GetOption) (int64, error)
 	InsertOne(agent model.Agent, image model.Image) (string, error)
 	Update(agent model.Agent, filter model.Image, image model.Image) (int64, error)
 	Delete(agent model.Agent, id model.Image) (int64, error)

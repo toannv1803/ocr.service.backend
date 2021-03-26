@@ -17,7 +17,7 @@ type mongoRepository struct {
 	collection *mongo.Collection
 }
 
-func (q *mongoRepository) Get(filter interface{}, res interface{}) error {
+func (q *mongoRepository) Find(filter interface{}, res interface{}, option FindOption) (int64, error) {
 	//var _filter interface{} = filter
 	//if filter.Id != "" {
 	//	objectId, err := primitive.ObjectIDFromHex(filter.Id)
@@ -27,18 +27,29 @@ func (q *mongoRepository) Get(filter interface{}, res interface{}) error {
 	//	_filter = bson.M{"_id": objectId}
 	//}
 	//doc, err := toDoc(filter)
+	opts := options.Find()
+	if option.Limit != 0 {
+		opts.SetLimit(option.Limit)
+	}
+	if option.Skip != 0 {
+		opts.SetSkip(option.Skip)
+	}
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-	cur, err := q.collection.Find(ctx, filter)
+	total, err := q.collection.CountDocuments(ctx, filter)
 	if err != nil {
-		return err
+		return 0, err
+	}
+	cur, err := q.collection.Find(ctx, filter, opts)
+	if err != nil {
+		return 0, err
 	}
 	//var arrOriginModel []bson.M
 	if err = cur.All(ctx, res); err != nil {
-		return err
+		return 0, err
 	}
 	defer cur.Close(ctx)
-	return nil
+	return total, nil
 }
 func (q *mongoRepository) Distinct(field string, filter interface{}) ([]interface{}, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)

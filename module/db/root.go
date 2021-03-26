@@ -1,7 +1,13 @@
 package db
 
+type FindOption struct {
+	Limit int64
+	Skip  int64
+	Sort  interface{}
+}
+
 type IDB interface {
-	Get(filter interface{}, res interface{}) error
+	Find(filter interface{}, res interface{}, option FindOption) (int64, error)
 	InsertOne(data interface{}) (string, error)
 	Update(filter interface{}, data interface{}) (int64, error)
 	Delete(image interface{}) (int64, error)

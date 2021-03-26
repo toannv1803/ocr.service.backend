@@ -10,6 +10,15 @@ definitions:
       user_id:
         type: string
     type: object
+  model.ImageLimitResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/model.ImageResponse'
+        type: array
+      total:
+        type: integer
+    type: object
   model.ImageResponse:
     properties:
       block_id:
@@ -131,6 +140,14 @@ paths:
       - in: query
         name: user_id
         type: string
+      - description: number
+        in: query
+        name: limit
+        type: string
+      - description: number
+        in: query
+        name: page
+        type: string
       - description: '''Bearer '' + token'
         in: header
         name: Authorization
@@ -144,9 +161,7 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/model.ImageResponse'
-            type: array
+            $ref: '#/definitions/model.ImageLimitResponse'
       summary: image
       tags:
       - Images

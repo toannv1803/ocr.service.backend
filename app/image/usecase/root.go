@@ -6,41 +6,42 @@ import (
 	ImageRepository "ocr.service.backend/app/image/repository"
 	"ocr.service.backend/enum"
 	"ocr.service.backend/model"
+	"ocr.service.backend/module/db"
 )
 
 type ImageUseCase struct {
 	repository ImageInterface.IImageRepository
 }
 
-func (q *ImageUseCase) Gets(agent model.Agent, filter model.Image) ([]model.Image, error) {
+func (q *ImageUseCase) Gets(agent model.Agent, filter model.Image, option ImageInterface.GetOption) ([]model.Image, int64, error) {
 	switch agent.Role {
 	case enum.RoleAdmin:
-		return q.repository.Get(filter)
+		return q.repository.Find(filter, db.FindOption{Skip: option.Skip, Limit: option.Limit})
 	case enum.RoleUser:
 		if agent.UserId == "" {
-			return nil, errors.New("agent not found user_id")
+			return nil, 0, errors.New("agent not found user_id")
 		}
 		filter.UserId = agent.UserId
-		return q.repository.Get(filter)
+		return q.repository.Find(filter, db.FindOption{Skip: option.Skip, Limit: option.Limit})
 	default: //enum.RoleAnonymous
 		filter.UserId = enum.RoleAnonymous
-		return q.repository.Get(filter)
+		return q.repository.Find(filter, db.FindOption{Skip: option.Skip, Limit: option.Limit})
 	}
 }
 
-func (q *ImageUseCase) GetsCustom(agent model.Agent, filter model.Image, res interface{}) error {
+func (q *ImageUseCase) GetsCustom(agent model.Agent, filter model.Image, res interface{}, option ImageInterface.GetOption) (int64, error) {
 	switch agent.Role {
 	case enum.RoleAdmin:
-		return q.repository.GetCustom(filter, res)
+		return q.repository.FindCustom(filter, res, db.FindOption{Skip: option.Skip, Limit: option.Limit})
 	case enum.RoleUser:
 		if agent.UserId == "" {
-			return errors.New("agent not found user_id")
+			return 0, errors.New("agent not found user_id")
 		}
 		filter.UserId = agent.UserId
-		return q.repository.GetCustom(filter, res)
+		return q.repository.FindCustom(filter, res, db.FindOption{Skip: option.Skip, Limit: option.Limit})
 	default: //enum.RoleAnonymous
 		filter.UserId = enum.RoleAnonymous
-		return q.repository.GetCustom(filter, res)
+		return q.repository.FindCustom(filter, res, db.FindOption{Skip: option.Skip, Limit: option.Limit})
 	}
 }
 

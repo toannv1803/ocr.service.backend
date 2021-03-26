@@ -11,6 +11,7 @@ import (
 	"ocr.service.backend/enum"
 	"ocr.service.backend/model"
 	module "ocr.service.backend/module/rabbitmq"
+	"strconv"
 )
 
 var CONFIG, _ = config.NewConfig(nil)
@@ -41,7 +42,7 @@ func (q *ImageDelivery) GetById(c *gin.Context) {
 	imageId := c.Param("image_id")
 	if imageId != "" {
 		var arrImageResponse []model.ImageResponse
-		err := q.useCase.GetsCustom(agent, model.Image{Id: imageId}, &arrImageResponse)
+		_, err := q.useCase.GetsCustom(agent, model.Image{Id: imageId}, &arrImageResponse, ImageInterface.GetOption{})
 		if err != nil {
 			switch err.Error() {
 			case "not found role":
@@ -139,21 +140,40 @@ func (q *ImageDelivery) Delete(c *gin.Context) {
 // @Description get list image
 // @start_time default
 // @Param _ query model.ImageFilter true "_"
+// @Param limit query string false "number"
+// @Param page query string false "number"
 // @Param Authorization header string true "'Bearer ' + token"
 // @Param status query string false "status"
-// @Success 200 {object} []model.ImageResponse
+// @Success 200 {object} model.ImageLimitResponse
 // @Router /api/v1/auth/images [get]
 func (q *ImageDelivery) Gets(c *gin.Context) {
 	var agent model.Agent
+	var limit int64
+	var page int64
 	if v, ok := c.Get("agent"); ok {
 		agent = v.(model.Agent)
 	}
+	strLimit := c.Query("limit")
+	i, err := strconv.Atoi(strLimit)
+	if err != nil {
+		limit = 0
+	}
+	limit = int64(i)
+
+	strPage := c.Query("page")
+	i, err = strconv.Atoi(strPage)
+	if err != nil {
+		page = 0
+	}
+	page = int64(i)
+
 	var filter model.ImageFilter
 	var image model.Image
 	if c.BindQuery(&filter) == nil {
 		copier.Copy(&image, &filter)
 		var arrImageResponse []model.ImageResponse
-		err := q.useCase.GetsCustom(agent, image, &arrImageResponse)
+		fmt.Println(limit * page)
+		total, err := q.useCase.GetsCustom(agent, image, &arrImageResponse, ImageInterface.GetOption{Limit: limit, Skip: limit * page})
 		if err != nil {
 			switch err.Error() {
 			case "not found role":
@@ -167,7 +187,11 @@ func (q *ImageDelivery) Gets(c *gin.Context) {
 			c.String(404, "not found")
 			return
 		}
-		c.JSON(200, arrImageResponse)
+		var imageLimitResponse = model.ImageLimitResponse{
+			Data:  arrImageResponse,
+			Total: total,
+		}
+		c.JSON(200, imageLimitResponse)
 		return
 	} else {
 		fmt.Println(c.BindQuery(&filter))

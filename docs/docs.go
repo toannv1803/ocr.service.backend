@@ -128,6 +128,18 @@ var doc = `{
                     },
                     {
                         "type": "string",
+                        "description": "number",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "'Bearer ' + token",
                         "name": "Authorization",
                         "in": "header",
@@ -144,10 +156,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/model.ImageResponse"
-                            }
+                            "$ref": "#/definitions/model.ImageLimitResponse"
                         }
                     }
                 }
@@ -353,6 +362,20 @@ var doc = `{
                 },
                 "user_id": {
                     "type": "string"
+                }
+            }
+        },
+        "model.ImageLimitResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.ImageResponse"
+                    }
+                },
+                "total": {
+                    "type": "integer"
                 }
             }
         },

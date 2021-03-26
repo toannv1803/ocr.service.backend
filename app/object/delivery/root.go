@@ -117,7 +117,7 @@ func (q *ObjectDelivery) DownloadById(c *gin.Context) {
 	id := c.Param("id")
 	if v, ok := c.Get("agent"); ok {
 		agent := v.(model.Agent)
-		arrImage, err := q.imageUseCase.Gets(agent, model.Image{Id: id})
+		arrImage, _, err := q.imageUseCase.Gets(agent, model.Image{Id: id}, ImageInterface.GetOption{})
 		if err != nil {
 			c.String(500, "read from db failed")
 		}

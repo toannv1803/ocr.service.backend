@@ -38,3 +38,8 @@ type ImageFilter struct {
 type ImageUpdate struct {
 	Data string `json:"data,omitempty" bson:"data,omitempty" form:"data,omitempty"`
 }
+
+type ImageLimitResponse struct {
+	Data  []ImageResponse `json:"data,omitempty" bson:"data,omitempty" form:"data,omitempty"`
+	Total int64           `json:"total,omitempty" bson:"total,omitempty" form:"total,omitempty"`
+}

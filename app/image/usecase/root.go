@@ -1,12 +1,15 @@
 package ImageUseCase
 
 import (
+	"bytes"
 	"errors"
+	"github.com/360EntSecGroup-Skylar/excelize/v2"
 	ImageInterface "ocr.service.backend/app/image/interface"
 	ImageRepository "ocr.service.backend/app/image/repository"
 	"ocr.service.backend/enum"
 	"ocr.service.backend/model"
 	"ocr.service.backend/module/db"
+	"strconv"
 )
 
 type ImageUseCase struct {
@@ -120,6 +123,36 @@ func (q *ImageUseCase) GetListBlockId(agent model.Agent) ([]string, error) {
 		}
 	}
 	return arrString, nil
+}
+
+func (q *ImageUseCase) ExportToExcel(agent model.Agent, filter model.Image) (*bytes.Buffer, error) {
+	var arrImageResponse []model.ImageResponse
+	switch agent.Role {
+	case enum.RoleAdmin:
+	case enum.RoleUser:
+		if agent.UserId == "" {
+			return nil, errors.New("not found user_id")
+		}
+		filter.UserId = agent.UserId
+
+	default: //enum.RoleAnonymous
+		filter.UserId = enum.RoleAnonymous
+	}
+	_, err := q.repository.FindCustom(filter, &arrImageResponse, db.FindOption{})
+	if err != nil {
+		return nil, err
+	}
+	f := excelize.NewFile()
+	f.NewSheet("Sheet1")
+	f.SetCellValue("Sheet1", "A1", "STT")
+	f.SetCellValue("Sheet1", "B1", "PATH")
+	f.SetCellValue("Sheet1", "C1", "DATA")
+	for i := range arrImageResponse {
+		f.SetCellValue("Sheet1", "A"+strconv.Itoa(i+2), i+1)
+		f.SetCellValue("Sheet1", "B"+strconv.Itoa(i+2), "http://localhost:2020/api/v1/object/"+arrImageResponse[i].Id)
+		f.SetCellValue("Sheet1", "C"+strconv.Itoa(i+2), arrImageResponse[i].Data)
+	}
+	return f.WriteToBuffer()
 }
 
 func NewImageUseCase() (ImageInterface.IImageUseCase, error) {

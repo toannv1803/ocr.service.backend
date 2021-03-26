@@ -1,6 +1,7 @@
 package ImageInterface
 
 import (
+	"bytes"
 	"github.com/gin-gonic/gin"
 	"ocr.service.backend/model"
 	"ocr.service.backend/module/db"
@@ -13,6 +14,7 @@ type IImageDelivery interface {
 	UpdateById(c *gin.Context)
 	Delete(c *gin.Context)
 	PublishTask(image model.ImageTask) error
+	GetExcel(c *gin.Context)
 }
 
 type IImageRepository interface {
@@ -36,4 +38,5 @@ type IImageUseCase interface {
 	Update(agent model.Agent, filter model.Image, image model.Image) (int64, error)
 	Delete(agent model.Agent, id model.Image) (int64, error)
 	GetListBlockId(agent model.Agent) ([]string, error)
+	ExportToExcel(agent model.Agent, filter model.Image) (*bytes.Buffer, error)
 }

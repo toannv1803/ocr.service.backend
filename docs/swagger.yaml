@@ -47,6 +47,35 @@ info:
   title: OCR BACKEND API
   version: "1.0"
 paths:
+  /api/v1/auth/excel:
+    get:
+      description: export excel, save file to *.xlsx
+      parameters:
+      - in: query
+        name: block_id
+        type: string
+      - in: query
+        name: id
+        type: string
+      - in: query
+        name: status
+        type: string
+      - in: query
+        name: user_id
+        type: string
+      - description: '''Bearer '' + token'
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.ImageLimitResponse'
+      summary: excel *.xlsx
+      tags:
+      - Excel
   /api/v1/auth/image/{image_id}:
     get:
       description: get list image
@@ -152,10 +181,6 @@ paths:
         in: header
         name: Authorization
         required: true
-        type: string
-      - description: status
-        in: query
-        name: status
         type: string
       responses:
         "200":

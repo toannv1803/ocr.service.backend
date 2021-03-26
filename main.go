@@ -50,6 +50,8 @@ func main() {
 			routerApiAuth.POST("/object", objectDelivery.Upload)
 			routerApiAuth.PUT("/object", objectDelivery.Upload)
 
+			routerApiAuth.GET("/excel", imageDelivery.GetExcel)
+
 			routerApiAuth.GET("/image/:image_id", imageDelivery.GetById)
 			routerApiAuth.POST("/image/:image_id", imageDelivery.UpdateById)
 			routerApiAuth.GET("/images", imageDelivery.Gets)

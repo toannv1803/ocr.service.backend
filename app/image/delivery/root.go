@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
+	"io"
 	ImageInterface "ocr.service.backend/app/image/interface"
 	ImageUseCase "ocr.service.backend/app/image/usecase"
 	"ocr.service.backend/config"
@@ -143,7 +144,6 @@ func (q *ImageDelivery) Delete(c *gin.Context) {
 // @Param limit query string false "number"
 // @Param page query string false "number"
 // @Param Authorization header string true "'Bearer ' + token"
-// @Param status query string false "status"
 // @Success 200 {object} model.ImageLimitResponse
 // @Router /api/v1/auth/images [get]
 func (q *ImageDelivery) Gets(c *gin.Context) {
@@ -193,6 +193,41 @@ func (q *ImageDelivery) Gets(c *gin.Context) {
 		}
 		c.JSON(200, imageLimitResponse)
 		return
+	} else {
+		fmt.Println(c.BindQuery(&filter))
+		c.String(500, "...")
+		return
+	}
+}
+
+// @tags Excel
+// @Summary excel *.xlsx
+// @Description export excel, save file to *.xlsx
+// @start_time default
+// @Param _ query model.ImageFilter true "_"
+// @Param Authorization header string true "'Bearer ' + token"
+// @Success 200 {object} model.ImageLimitResponse
+// @Router /api/v1/auth/excel [get]
+func (q *ImageDelivery) GetExcel(c *gin.Context) {
+	var agent model.Agent
+	if v, ok := c.Get("agent"); ok {
+		agent = v.(model.Agent)
+	}
+	var filter model.ImageFilter
+	var image model.Image
+	if c.BindQuery(&filter) == nil {
+		copier.Copy(&image, &filter)
+		data, err := q.useCase.ExportToExcel(agent, image)
+		if err != nil {
+			switch err.Error() {
+			case "not found role":
+				c.String(401, "not allow")
+			default:
+				c.String(500, err.Error())
+			}
+			return
+		}
+		io.Copy(c.Writer, data)
 	} else {
 		fmt.Println(c.BindQuery(&filter))
 		c.String(500, "...")

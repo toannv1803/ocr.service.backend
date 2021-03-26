@@ -25,6 +25,52 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/v1/auth/excel": {
+            "get": {
+                "description": "export excel, save file to *.xlsx",
+                "tags": [
+                    "Excel"
+                ],
+                "summary": "excel *.xlsx",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "block_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "user_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "'Bearer ' + token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.ImageLimitResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/auth/image/{image_id}": {
             "get": {
                 "description": "get list image",
@@ -144,12 +190,6 @@ var doc = `{
                         "name": "Authorization",
                         "in": "header",
                         "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "status",
-                        "name": "status",
-                        "in": "query"
                     }
                 ],
                 "responses": {
